@@ -4,18 +4,25 @@ import random
 import argparse
 from pydub import AudioSegment
 from pydub.playback import play
+import sys
 
-parser = argparse.ArgumentParser(description='Create animalese audio')
-parser.add_argument('words', type=str, nargs='+',
-                    help='words of the sentence')
-parser.add_argument('--pitch', default='med', type=str,
-                    help="voice pitch, choose between 'high', 'med', 'low' or 'lowest'")
-parser.add_argument('--out', default='sound.wav', type=str,
-                    help="output file")
-args = parser.parse_args()
-stringy = ' '.join(args.words)
-pitch = args.pitch
-out_file = args.out
+AudioSegment.converter = "ffmpeg.exe"
+AudioSegment.ffprobe = "ffprobe.exe"
+
+# parser = argparse.ArgumentParser(description='Create animalese audio')
+# parser.add_argument('words', type=str, nargs='+',
+#                     help='words of the sentence')
+# parser.add_argument('--pitch', default='med', type=str,
+#                     help="voice pitch, choose between 'high', 'med', 'low' or 'lowest'")
+# parser.add_argument('--out', default='sound.wav', type=str,
+#                     help="output file")
+# args = parser.parse_args()
+
+
+# Check if words are provided as command line arguments; if not, read from stdin
+stringy = sys.stdin.readline().strip()
+pitch = "med"
+out_file = "sound.wav"
 
 stringy = stringy.lower()
 sounds = {}
