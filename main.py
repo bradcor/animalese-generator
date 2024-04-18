@@ -43,8 +43,6 @@ def send_sound(sound):
     print(sound)
 
 if __name__ == "__main__":
-
-    user_input = input("Please enter the string for animalese: ")
     
     user_input = "Start"
 
