@@ -41,6 +41,7 @@ else:
 
 infiles = []
 
+
 for i, char in enumerate(stringy):
 	try:
 		if char == 's' and stringy[i+1] == 'h': #test for 'sh' sound
@@ -64,7 +65,7 @@ for i, char in enumerate(stringy):
 
 combined_sounds = None
 
-print(len(infiles))
+# print(len(infiles))
 for index,sound in enumerate(infiles):
 	tempsound = AudioSegment.from_wav(sound)
 	if stringy[len(stringy)-1] == '?':
