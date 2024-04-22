@@ -8,9 +8,6 @@ ffmpeg.exe
 ffplay.exe
 ffprobe.exe
 
-# sound
-sound.wav
-
 # C extensions
 *.so
 

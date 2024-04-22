@@ -44,6 +44,8 @@ def send_sound(sound):
 
 if __name__ == "__main__":
     
+    # call setup file
+
     user_input = "Start"
 
     while (user_input != "quit"):
@@ -54,7 +56,7 @@ if __name__ == "__main__":
         # Specify the path to the output audio file
         output_file = "sound.wav"
         duration = get_wav_duration(output_file)
-        duration_per_character = duration / len(user_input)
+        duration_per_character = duration / (len(user_input) * 1)
 
         thread = threading.Thread(target=play_output, args=(output_file,))
         thread.start()        
