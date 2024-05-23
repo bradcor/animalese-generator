@@ -1,20 +1,23 @@
 # Animalese Audio Generator
 
 ## General info
-This project allows you to generate audio from text in the style of animalese from the Animal Crossing games. 
+This project allows you to generate audio from text in the style of animalese from the Animal Crossing games.
+This has been updated to read from messages from Twitch, specifically if the broadcaster typed the message.
 
 ## Usage
 
 ```
-$ ./animalese.py the quick brown fox jumps over the lazy dog
+$ py main.py
 ```
 
-The program accepts two options, one to control the pitch (available options: 'lowest', 'low', 'med', 'high')
-and one to control the output file
-```
-$ ./animalese.py the quick brown fox jumps over the lazy dog --pitch high --out output_name.wav
-```
+Make sure you have your .env file updated with the following lines:
+- TWITCH_CHANNEL_NAME='Channel's Chat To Connect To'
+- TWITCH_BOT_USERNAME='All Lowercase Name of Bot Maker (name of account you used to get access token)'
+- ACCESS_TOKEN = 'oauth: Access token from [Twitch token generator](https://twitchtokengenerator.com/)'
 
+Make sure to have ACCESS_TOKEN lead with oauth:
+An example of this would be: oauth:RandomAccessCode
+```
 
 ## Technologies
 Project is created with:
@@ -23,12 +26,4 @@ Project is created with:
 ## Installing required dependencies
 ```
 $ pip install pydub
-```
-[You'll also need to install `ffmpeg` or `libav` for this to work](https://github.com/jiaaro/pydub#dependencies)
-```
-$ brew install ffmpeg
-```
-or
-```
-$ brew install libav
-```
+
