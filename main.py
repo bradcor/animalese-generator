@@ -1,10 +1,14 @@
-import subprocess
+import subprocess, os, time, wave, threading, requests, socket
 from pydub import AudioSegment
 from pydub.playback import play
-import os
-import time
-import wave
-import threading
+from dotenv import load_dotenv
+
+load_dotenv()
+TWITCH_CHANNEL_NAME = os.getenv('TWITCH_CHANNEL_NAME')
+ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
+TWITCH_BOT_USERNAME = os.getenv('TWITCH_BOT_USERNAME')
+token = None
+sock = socket.socket()
 
 def call_animalese(input_text):
     # Assuming animalese.py is in the same directory and ready to receive input from stdin
@@ -42,29 +46,78 @@ def get_wav_duration(wav_path):
 def send_sound(sound):
     print(sound)
 
+def read_messages():
+    buffer = ""
+    while True:
+        buffer += sock.recv(1024).decode('utf-8')
+        messages = buffer.split("\r\n")
+        buffer = messages.pop()
+
+        for message in messages:
+            if message.startswith("PING"):
+                sock.send("PONG :tmi.twitch.tv\r\n".encode('utf-8'))
+            else:
+                process_message(message)
+
+def extract_display_name(message):
+    """Extract display-name from the IRC message."""
+    parts = message.split(';')
+    for part in parts:
+        if part.startswith('display-name='):
+            return part.split('=')[1]
+    return None
+
+def process_message(message):
+    display_name = str(extract_display_name(message)).lower()
+    print("Name = " + display_name)
+    parts = message.split(' ', 3)
+    for part in parts:
+        print(part)
+    if len(parts) > 3:
+        msg_prefix, msg_command, msg_params, msg_text = parts
+
+        if msg_params == 'PRIVMSG':
+            print(msg_text)
+            user, user_input = msg_text.split(':', 1)
+            user_input = str(user_input).strip()
+            if display_name == str(TWITCH_CHANNEL_NAME).lower():                
+                print(f"Received message: {user_input}")
+                call_animalese(user_input)
+
+                # Specify the path to the output audio file
+                output_file = "sound.wav"
+                duration = get_wav_duration(output_file)
+                duration_per_character = duration / (len(user_input) * 1)
+
+                thread = threading.Thread(target=play_output, args=(output_file,))
+                thread.start()
+
+                for letter in user_input:
+                    print(letter)
+                    time.sleep(duration_per_character)
+
+                thread.join()
+
+
 if __name__ == "__main__":
-    
-    # call setup file
 
-    user_input = "Start"
+    token = ACCESS_TOKEN
+    # Twitch IRC server details
+    server = 'irc.chat.twitch.tv'
+    port = 6667
 
-    while (user_input != "quit"):
+    # Connect to Twitch IRC
+    try:
+        # Connect to Twitch IRC
+        sock.connect((server, port))
+        sock.send(f'CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands\n'.encode('utf-8'))
+        sock.send(f"PASS {token}\n".encode('utf-8'))
+        sock.send(f"NICK {TWITCH_BOT_USERNAME}\n".encode('utf-8'))
+        sock.send(f"JOIN #{TWITCH_CHANNEL_NAME}\n".encode('utf-8'))
+        print(f"Connected to IRC channel #{TWITCH_CHANNEL_NAME}")
+    except Exception as e:
+        print(f"Error connecting to IRC: {e}")
+        exit(1)
 
-        user_input = input("Please enter the string for animalese: ")
-        call_animalese(user_input)
 
-        # Specify the path to the output audio file
-        output_file = "sound.wav"
-        duration = get_wav_duration(output_file)
-        duration_per_character = duration / (len(user_input) * 1)
-
-        thread = threading.Thread(target=play_output, args=(output_file,))
-        thread.start()        
-
-        # threading adds 120 ms delay to audio play
-        # time.sleep(0.12)
-        for letter in user_input:
-            print(letter)
-            time.sleep(duration_per_character)
-
-        thread.join()
+    read_messages()
