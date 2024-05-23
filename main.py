@@ -5,9 +5,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 TWITCH_CHANNEL_NAME = os.getenv('TWITCH_CHANNEL_NAME')
-ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 TWITCH_BOT_USERNAME = os.getenv('TWITCH_BOT_USERNAME')
-token = None
+ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
 sock = socket.socket()
 
 def call_animalese(input_text):
@@ -100,8 +99,6 @@ def process_message(message):
 
 
 if __name__ == "__main__":
-
-    token = ACCESS_TOKEN
     # Twitch IRC server details
     server = 'irc.chat.twitch.tv'
     port = 6667
@@ -111,7 +108,7 @@ if __name__ == "__main__":
         # Connect to Twitch IRC
         sock.connect((server, port))
         sock.send(f'CAP REQ :twitch.tv/membership twitch.tv/tags twitch.tv/commands\n'.encode('utf-8'))
-        sock.send(f"PASS {token}\n".encode('utf-8'))
+        sock.send(f"PASS {ACCESS_TOKEN}\n".encode('utf-8'))
         sock.send(f"NICK {TWITCH_BOT_USERNAME}\n".encode('utf-8'))
         sock.send(f"JOIN #{TWITCH_CHANNEL_NAME}\n".encode('utf-8'))
         print(f"Connected to IRC channel #{TWITCH_CHANNEL_NAME}")
