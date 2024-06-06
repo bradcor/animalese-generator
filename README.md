@@ -3,6 +3,7 @@
 ## General info
 This project allows you to generate audio from text in the style of animalese from the Animal Crossing games.
 This has been updated to read from messages from Twitch, specifically if the broadcaster typed the message.
+The project will send data to Vtube Studio as variables for rigging and animating of model based on posted text and is synced up with audio playback.
 
 ## Usage
 
@@ -26,4 +27,9 @@ Project is created with:
 ## Installing required dependencies
 ```
 $ pip install pydub
+
+## Pending Implementation
+- Websocket connection to VTS
+- Parameter generation in VTS
+- Parameter passing in VTS
 
